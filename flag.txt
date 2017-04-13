@@ -1,0 +1,204 @@
+#include<iostream>
+#include<graphics.h>
+#include<math.h>
+#include<stdio.h>
+#include<stdlib.h>
+using namespace std;
+class pixel
+{
+	public:void insert(double x,double y,double z);
+};
+void pixel::insert(double x,double y,double z)
+{
+	putpixel(x,y,z);
+}
+class draw:public pixel
+{
+	int a[4][3],b[3][3],c[4][3],final[10],tx,ty;
+	float sx,sy;
+	public:	draw();
+		int sign(int temp);
+		void DDA(double x1,double x2,double y1,double y2);
+		void bresenhams(double r,double c1,double c2,double x1);
+		void scaling();
+		void translation();
+}obj1;
+draw::draw()
+{
+	int i,j;
+	for(i=0;i<4;i++)
+	{
+		a[i][2]=1;
+	}
+	a[0][0]=110;	
+	a[0][1]=320;
+	a[1][0]=115;
+	a[1][1]=320;
+	a[2][0]=110;
+	a[2][1]=350;
+	a[3][0]=115;
+	a[3][1]=350;
+	for(i=0;i<3;i++)
+	{
+		for(j=0;j<3;j++)
+		{
+			b[i][j]=0;
+			b[i][i]=1;
+		}
+	}
+}			
+int draw::sign(int temp)
+{
+	if(temp<0)
+		return -1;
+	if(temp==0)
+		return 0;
+	if(temp>0)
+		return 1;
+	return -1;
+}
+void draw::DDA(double x1,double x2,double y1,double y2)
+{
+	double dx,dy,length,x,y;
+	if(abs(x2-x1)>=abs(y2-y1))
+		length=abs(x2-x1);
+	else
+		length=abs(y2-y1);
+	dx=(x2-x1)/length;
+	dy=(y2-y1)/length;
+
+	x=x1+0.5*sign(dx);
+	y=y1+0.5*sign(dy);
+
+	obj1.insert(x,y,255);
+	int i=1;
+	while(i<=length)
+	{
+		x=x+dx;
+		y=y+dy;
+		obj1.insert(x,y,255);
+		i=i+1;
+	}
+}
+/*void draw::scaling()
+{
+	int i,j=0,k,l,m=0;
+	transformations();
+	cout<<"\n Enter Sx and Sy factors:";
+	cin>>sx>>sy;
+	b[0][0]=sx;
+	b[1][1]=sy;
+	for(i=0;i<4;i++)
+	{
+		
+		for(j=0;j<3;j++)
+		{
+			c[i][j]=0;
+			for(k=0;k<3;k++)
+			{
+				c[i][j]=c[i][j]+a[i][k]*b[k][j];
+			}
+		}
+	}
+	for(i=0;i<4;i++)
+	{	
+		for(j=0;j<2;j++)
+		{
+			final[m]=c[i][j];
+			m++;
+		}
+	}
+	final[m]=final[0];
+	m++;
+	final[m]=final[1];
+	drawpoly(5,final);
+}	
+void draw::translation()
+{
+	int i,j=0,k,l,m=0;
+	tx=0;
+	ty=-3;
+	b[2][0]=tx;
+	b[2][1]=ty;
+	for(i=0;i<4;i++)
+	{
+		
+		for(j=0;j<3;j++)
+		{
+			c[i][j]=0;
+			for(k=0;k<3;k++)
+			{
+				c[i][j]=c[i][j]+a[i][k]*b[k][j];
+			}
+		}
+	}
+	for(i=0;i<4;i++)
+	{	
+		for(j=0;j<2;j++)
+		{
+			final[m]=c[i][j];
+			m++;
+		}
+	}
+	final[m]=final[0];
+	m++;
+	final[m]=final[1];
+	drawpoly(5,final);
+}
+/*void draw::bresenhams(double r,double c1,double c2)
+{
+	int p,x,y;
+	p=3-2*r;
+	x=0;
+	y=r;
+	do
+	{
+		obj1.insert(x+c1,y+c2,255);
+		obj1.insert(-x+c1,-y+c2,255);
+		obj1.insert(-x+c1,y+c2,255);
+		obj1.insert(x+c1,-y+c2,255);
+		obj1.insert(y+c1,x+c2,255);
+		obj1.insert(-y+c1,-x+c2,255);
+		obj1.insert(y+c1,-x+c2,255);
+		obj1.insert(-y+c1,x+c2,255);
+		if(p<0)
+		{
+			p=p+4*x+6;
+		}
+		else
+		{
+			p=p+4*(x-y)+10;
+			y=y-1;
+		}
+		x=x+1;
+	}while(x<y);
+	
+}*/
+int main()
+{
+	draw obj;
+	int i;
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"");
+	for(i=0;i<240;i++)
+	{	
+		rectangle(100,80,110,350);			//pole
+		rectangle(80,350,130,380);			//base1
+		rectangle(60,380,150,410);			//base2
+		rectangle(110,320-i,115,350-i);
+		delay(15);
+		if(i==239)
+		{
+			for(int j=0,k=0;j<80,k<60;j++,k++)
+			{
+				rectangle(115+j,80+k,190,140);
+				delay(100);
+			}
+		}		
+		cleardevice();
+	}
+	closegraph();
+	return 0;
+}
+
+

@@ -1,0 +1,155 @@
+//Write c++ program to draw line using DDA and Bresenham's Algorithm.Inherit pixel class and use function overloading.
+
+#include<iostream>
+#include<graphics.h>
+#include<math.h>
+using namespace std;
+class pixel
+{
+	public:void insert(int x,int y,int z);
+};
+void pixel::insert(int x,int y,int z)
+{
+	putpixel(x,y,z);
+}
+class DDA:public pixel
+{
+	int x1,x2,y1,y2;
+	public:	void set1();
+		int sign1(int temp);
+		void dda();
+}obj1;
+class bresenhams:public pixel
+{
+	int x1,x2,y1,y2;
+	public:	void set2();
+		int sign2(int temp);
+		void draw();
+}obj2;
+void bresenhams::set2()
+{
+	cout<<"\n Enter the starting co-ordinates of the line";
+	cin>>x1>>y1;
+	cout<<"\n Enter the ending co-ordinates of the line";
+	cin>>x2>>y2;
+}
+int bresenhams::sign2(int temp)
+{
+	if(temp<0)
+		return -1;
+	if(temp==0)
+		return 0;
+	if(temp>0)
+		return 1;
+	return -1;
+}
+void bresenhams::draw()
+{
+	int x,y,dx,dy,temp,interchange,s1,s2,p;
+	x=x1;
+	y=y1;
+	dx=abs(x2-x1);
+	dy=abs(y2-y1);
+	s1=sign2(x2-x1);
+	s2=sign2(y2-y1);
+	if(dy>dx)
+	{
+		temp=dx;
+		dx=dy;
+		dy=temp;
+		interchange=1;
+	}
+	else
+	{
+		interchange=0;
+	}
+	p=2*dy-dx;
+	for(int i=1;i<=dx;i++)
+	{
+		obj2.insert(x,y,255);
+		while(p>=0)
+		{
+			if(interchange==1)
+				x=x+s1;
+			else
+				y=y+s2;
+			p=p-2*dx;
+		}
+		if(interchange==1)
+			y=y+s2;
+		else
+			x=x+s1;
+		p=p+2*dy;
+	}
+}
+void DDA::set1()
+{
+	cout<<"\n Enter the starting co-ordinates of the line";
+	cin>>x1>>y1;
+	cout<<"\n Enter the ending co-ordinates of the line";
+	cin>>x2>>y2;
+}
+int DDA::sign1(int temp)
+{
+	if(temp<0)
+		return -1;
+	if(temp==0)
+		return 0;
+	if(temp>0)
+		return 1;
+	return -1;
+}
+void DDA::dda()
+{
+	float dx,dy,length,x,y;
+	if(abs(x2-x1)>=abs(y2-y1))
+		length=abs(x2-x1);
+	else
+		length=abs(y2-y1);
+	dx=(x2-x1)/length;
+	dy=(y2-y1)/length;
+
+	x=x1+0.5*sign1(dx);
+	y=y1+0.5*sign1(dy);
+
+	obj1.insert(x,y,255);
+	int i=1;
+	while(i<=length)
+	{
+		x=x+dx;
+		y=y+dy;
+		obj1.insert(x,y,255);
+		i=i+1;
+	}
+}
+int main()
+{
+	DDA obj1;
+	bresenhams obj2;
+	int m;
+	char ans;
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"");
+	do
+	{
+		cout<<"\n Enter which drawing algorithm you want to choose \n 1.DDA algorithm \n 2.Bresenham's algorithm";
+		cin>>m;
+		switch(m)
+		{
+			case 1:	obj1.set1();
+				obj1.dda();
+				delay(5000);
+				break;
+			case 2:	obj2.set2();
+				obj2.draw();
+				delay(5000);
+				break;
+		}
+		cout<<"\n Do you want to continue?";
+		cin>>ans;
+	}while(ans=='y'||ans=='Y');
+	//delay(5000);
+	closegraph();
+	return 0;
+}
+

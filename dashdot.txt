@@ -1,0 +1,204 @@
+// Write c++ program for line drawing for DDA or bresenham's algorithm with patters such as solid,dotted,dashed,dashed-dotted,thick.
+
+#include<iostream>
+#include<graphics.h>
+#include<math.h>
+using namespace std;
+class pixel
+{
+	public:void insert(int x,int y,int z);
+};
+void pixel::insert(int x,int y,int z)
+{
+	putpixel(x,y,z);
+}
+class DDA:public pixel
+{
+	int x1,x2,y1,y2;
+	public:	void set();
+		int sign(int temp);
+		void solid();
+		void dotted();
+		void dashed();
+		void dashed_dotted();
+		void thick();
+}obj1;
+void DDA::set()
+{
+	cout<<"\n Enter the starting co-ordinates of the line";
+	cin>>x1>>y1;
+	cout<<"\n Enter the ending co-ordinates of the line";
+	cin>>x2>>y2;
+}
+int DDA::sign(int temp)
+{
+	if(temp<0)
+		return -1;
+	if(temp==0)
+		return 0;
+	if(temp>0)
+		return 1;
+	return -1;
+}
+void DDA::solid()
+{
+	float x,y,length,dx,dy;
+	if(abs(x2-x1)>=abs(y2-y1))
+		length=abs(x2-x1);
+	else
+		length=abs(y2-y1);
+	dx=(x2-x1)/length;
+	dy=(y2-y1)/length;
+
+	x=x1+0.5*sign(dx);
+	y=y1+0.5*sign(dy);
+
+	obj1.insert(x,y,255);
+	int i=1;
+	while(i<=length)
+	{
+		x=x+dx;
+		y=y+dy;
+		obj1.insert(x,y,255);
+		i=i+1;
+	}
+}
+void DDA::dotted()
+{
+	float x,y,length,dx,dy;
+	if(abs(x2-x1)>=abs(y2-y1))
+		length=abs(x2-x1);
+	else
+		length=abs(y2-y1);
+	dx=(x2-x1)/length;
+	dy=(y2-y1)/length;
+
+	x=x1+0.5*sign(dx);
+	y=y1+0.5*sign(dy);
+
+	obj1.insert(x,y,255);
+	int i=1;
+	while(i<=length)
+	{
+		x=x+dx;
+		y=y+dy;
+		if(i%2==0)
+		{
+			obj1.insert(x,y,255);
+		}
+		i=i+1;
+	}
+}
+void DDA::dashed()
+{
+	float length,dx,dy,x,y;
+	if(abs(x2-x1)>=abs(y2-y1))
+		length=abs(x2-x1);
+	else
+		length=abs(y2-y1);
+	dx=(x2-x1)/length;
+	dy=(y2-y1)/length;
+
+	x=x1+0.5*sign(dx);
+	y=y1+0.5*sign(dy);
+
+	obj1.insert(x,y,255);
+	int i=1;
+	while(i<=length)
+	{
+		x=x+dx;
+		y=y+dy;
+		if(!(i%7==0 || i%7==6))
+		{
+			obj1.insert(x,y,255);
+		}
+		i=i+1;
+	}
+}
+void DDA::dashed_dotted()
+{
+    int i,length,chx,chy,x,y;
+    if(abs(x2-x1)>=abs(y2-y1))
+        length=abs(x2-x1);
+    else
+        length=abs(y2-y1);
+    chx=(x2-x1)/length;
+    chy=(y2-y1)/length;
+    x=x1+0.5*sign(chx);
+    y=y1+0.5*sign(chy);
+    obj1.insert(x,y,3);
+    i=1;
+    while(i<=length)
+    {
+        x=x+chx;
+        y=y+chy;
+        if(!((i%7==0)||(i%7==5)))
+        {
+           obj1.insert(x,y,3);
+        }
+        i++;
+    }
+}
+void DDA::thick()
+{
+    float x,y,length,dx,dy;
+    int w=150;
+    if(abs(x2-x1)>=abs(y2-y1))
+        length=abs(x2-x1);
+    else
+        length=abs(y2-y1);
+    dx=(x2-x1)/length;
+    dy=(y2-y1)/length;
+
+    x=x1+0.5*sign(dx);
+    y=y1+0.5*sign(dy);
+    for(int i=0;i<w;i++)
+    {
+        y=y+i;
+        obj1.insert(x,y,255);
+        i=1;
+        while(i<=length)
+        {
+            x=x+dx;
+            y=y+dy;
+            obj1.insert(x,y,255);
+            i=i+1;
+        }
+    }
+}
+int main()
+{
+	DDA obj1;
+	int m;
+	char ans;
+	int gd=DETECT,gm;
+	initgraph(&gd,&gm,"");
+	do
+	{
+		cout<<"\n Enter which type of line you want to draw \n 1.Solid \n 2.Dashed \n 3.Dotted \n 4.Dashed-dotted \n 5.Thick";
+		cin>>m;
+		switch(m)
+		{
+			case 1:	obj1.set();
+					obj1.solid();
+					break;
+			case 2:	obj1.set();
+					obj1.dashed();
+					break;
+			case 3:	obj1.set();
+					obj1.dotted();
+					break;
+			case 4:	obj1.set();
+					obj1.dashed_dotted();
+					break;
+			case 5:	obj1.set();
+					obj1.thick();
+					break;
+		}
+		cout<<"\n Do you want to continue?";
+		cin>>ans;
+	}while(ans=='y'||ans=='Y');
+	delay(5000);
+	closegraph();
+	return 0;
+}
